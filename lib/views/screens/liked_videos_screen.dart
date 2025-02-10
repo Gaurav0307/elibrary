@@ -146,7 +146,7 @@ class _LikedVideosScreenState extends State<LikedVideosScreen> {
                               : myDownloaderList[index].status.value ==
                                           "downloaded" ||
                                       myDownloaderList[index].isDownloaded(url)
-                                  ? const FittedBox(
+                                  ? FittedBox(
                                       child: Column(
                                         children: [
                                           Icon(
@@ -154,7 +154,7 @@ class _LikedVideosScreenState extends State<LikedVideosScreen> {
                                             color: Colors.red,
                                           ),
                                           Text(
-                                            "Delete\nDownload",
+                                            StringConstants.deleteDownload,
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               fontSize: 6.0,
@@ -164,7 +164,7 @@ class _LikedVideosScreenState extends State<LikedVideosScreen> {
                                         ],
                                       ),
                                     )
-                                  : const FittedBox(
+                                  : FittedBox(
                                       child: Column(
                                         children: [
                                           Icon(
@@ -172,7 +172,7 @@ class _LikedVideosScreenState extends State<LikedVideosScreen> {
                                             color: Colors.lightBlue,
                                           ),
                                           Text(
-                                            "Download",
+                                            StringConstants.download,
                                             style: TextStyle(
                                               fontSize: 6.0,
                                               fontWeight: FontWeight.w600,

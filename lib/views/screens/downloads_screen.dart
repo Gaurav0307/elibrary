@@ -140,7 +140,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                               )
                             : myDownloader.status.value == "downloaded" ||
                                     myDownloader.isDownloaded(url)
-                                ? const FittedBox(
+                                ? FittedBox(
                                     child: Column(
                                       children: [
                                         Icon(
@@ -148,7 +148,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                                           color: Colors.red,
                                         ),
                                         Text(
-                                          "Delete\nDownload",
+                                          StringConstants.deleteDownload,
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                             fontSize: 6.0,
@@ -158,7 +158,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                                       ],
                                     ),
                                   )
-                                : const FittedBox(
+                                : FittedBox(
                                     child: Column(
                                       children: [
                                         Icon(
@@ -166,7 +166,7 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                                           color: Colors.lightBlue,
                                         ),
                                         Text(
-                                          "Download",
+                                          StringConstants.download,
                                           style: TextStyle(
                                             fontSize: 6.0,
                                             fontWeight: FontWeight.w600,

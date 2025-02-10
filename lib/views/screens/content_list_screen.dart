@@ -196,7 +196,7 @@ class _ContentListScreenState extends State<ContentListScreen> {
                                       color: Colors.red,
                                     ),
                                     Text(
-                                      "Delete\nDownload",
+                                      StringConstants.deleteDownload,
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                         fontSize: 6.0,
@@ -206,7 +206,7 @@ class _ContentListScreenState extends State<ContentListScreen> {
                                   ],
                                 ),
                               )
-                            : const FittedBox(
+                            : FittedBox(
                                 child: Column(
                                   children: [
                                     Icon(
@@ -214,7 +214,7 @@ class _ContentListScreenState extends State<ContentListScreen> {
                                       color: Colors.lightBlue,
                                     ),
                                     Text(
-                                      "Download",
+                                      StringConstants.download,
                                       style: TextStyle(
                                         fontSize: 6.0,
                                         fontWeight: FontWeight.w600,
