@@ -54,8 +54,10 @@ dependencies:
   http: any
   get_thumbnail_video: ^0.7.3
   audioplayers: ^6.1.1
+  pdfrx: ^1.0.101
   device_info_plus: any
   intl_phone_number_input: ^0.7.4
+  background_downloader: ^8.9.4
 
 dev_dependencies:
   flutter_test:
@@ -75,6 +77,10 @@ flutter_launcher_icons:
   remove_alpha_ios: true
   image_path: "assets/icons/app-icon.png"
   min_sdk_android: 21 # android min sdk min:16, default 21
+
+  #  Run following commands
+  #  flutter pub get
+  #  dart run flutter_launcher_icons
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

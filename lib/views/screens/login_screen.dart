@@ -1,3 +1,4 @@
+import 'package:elibrary/views/screens/home_screen.dart';
 import 'package:elibrary/views/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -304,6 +305,7 @@ class _LoginFormState extends State<LoginForm> {
                   _formKey.currentState!.save();
                   FocusScope.of(context).unfocus();
                 }
+                Get.to(() => const HomeScreen());
               },
               child: Text(
                 StringConstants.login,

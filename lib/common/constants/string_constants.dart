@@ -15,27 +15,26 @@ class StringConstants {
   static const String collegeName = "College Name";
   static const String confirmPassword = "Confirm Password";
   static const String alreadyHaveAnAccount = "Already have an account?";
-  static const String home = "Home";
-  static const String profile = "Profile";
   static const String logout = "Logout";
-  static const String noSearchResultTitle = "Sorry, no results found";
-  static const String noSearchResultSubtitle =
-      "What you searched is unfortunately not found or doesn't exist";
-  static const String selectImageSource = "Select Image Source";
-  static const String gallery = "Gallery";
-  static const String camera = "Camera";
-  static const String fileSizeMustBeSmallerThan =
-      "File size must be smaller than";
-  static const String selectVideoSource = "Select Video Source";
-  static const String image = "Image";
-  static const String video = "Video";
-  static const String audio = "Audio";
-  static const String pdf = "PDF";
   static const String changePassword = "Change Password";
   static const String update = "Update";
   static const String currentPassword = "Current Password";
   static const String newPassword = "New Password";
   static const String confirmNewPassword = "Confirm New Password";
+  static const String downloads = "Downloads";
+  static const String likedVideos = "Liked Videos";
+  static const String history = "History";
+  static const String branches = "Branches";
+  static const String years = "Years";
+  static const String contents = "Contents";
+  static const String notes = "Notes";
+  static const String questionPapers = "Question Papers";
+  static const String videos = "Videos";
+  static const String subjects = "Subjects";
+  static const String syllabus = "Syllabus";
+  static const String noDataAvailable = "No Data Available";
+  static const String thereIsNoDataToBeShown =
+      "There is no data available to be shown here.";
 
   /// Validation
   static const String fullNameIsRequired = "Full Name is required.";
