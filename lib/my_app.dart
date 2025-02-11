@@ -28,7 +28,7 @@ class _MyAppState extends State<MyApp> {
         locale: DevicePreview.locale(context),
         builder: DevicePreview.appBuilder,
         debugShowCheckedModeBanner: false,
-        title: 'Chat App GetX',
+        title: 'eLibrary',
         theme: ThemeData(
           // appBarTheme: AppBarTheme(
           //   backgroundColor: ColorConstants.theIndigo,

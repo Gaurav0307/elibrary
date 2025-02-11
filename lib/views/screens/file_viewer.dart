@@ -43,10 +43,30 @@ class _FileViewerState extends State<FileViewer> {
             );
       videoPlayerController!.initialize();
     }
+
+    addToHistory(widget.filePath);
+  }
+
+  Future<void> addToHistory(String filePath) async {
+    var key = "history";
+    if (filePath.toLowerCase().startsWith("http")) {
+      List<String> history = [];
+
+      if (sharedPreferences!.containsKey(key)) {
+        history = sharedPreferences!.getStringList(key) ?? [];
+      }
+
+      if (!history.contains(filePath)) {
+        history.add(filePath);
+        await sharedPreferences!.setStringList(key, history);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    var key = "likedVideos";
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -58,15 +78,25 @@ class _FileViewerState extends State<FileViewer> {
                   widget.filePath.toLowerCase().startsWith("http"))
               ? IconButton(
                   onPressed: () async {
-                    if (sharedPreferences!.containsKey(widget.filePath)) {
-                      await sharedPreferences!.remove(widget.filePath);
-                    } else {
-                      await sharedPreferences!
-                          .setString(widget.filePath, "Liked");
+                    List<String> likedVideos = [];
+
+                    if (sharedPreferences!.containsKey(key)) {
+                      likedVideos = sharedPreferences!.getStringList(key) ?? [];
                     }
+
+                    if (likedVideos.contains(widget.filePath)) {
+                      likedVideos.remove(widget.filePath);
+                    } else {
+                      likedVideos.add(widget.filePath);
+                    }
+
+                    await sharedPreferences!.setStringList(key, likedVideos);
                     setState(() {});
                   },
-                  icon: sharedPreferences!.containsKey(widget.filePath)
+                  icon: sharedPreferences!.containsKey(key) &&
+                          sharedPreferences!
+                              .getStringList(key)!
+                              .contains(widget.filePath)
                       ? Icon(Icons.thumb_up)
                       : Icon(Icons.thumb_up_outlined),
                 )

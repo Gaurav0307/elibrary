@@ -2,6 +2,7 @@ import 'package:elibrary/common/constants/asset_constants.dart';
 import 'package:elibrary/common/constants/string_constants.dart';
 import 'package:elibrary/views/screens/branches_screen.dart';
 import 'package:elibrary/views/screens/downloads_screen.dart';
+import 'package:elibrary/views/screens/history_screen.dart';
 import 'package:elibrary/views/screens/liked_videos_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -124,7 +125,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     Icons.arrow_forward_ios,
                     size: 16.0,
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Get.to(() => const HistoryScreen());
+                  },
                 ),
                 Spacer(),
                 ListTile(

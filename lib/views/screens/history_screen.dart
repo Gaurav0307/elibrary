@@ -7,14 +7,45 @@ import '../../common/services/file_downloader.dart';
 import '../widgets/no_data.dart';
 import 'file_viewer.dart';
 
-class LikedVideosScreen extends StatefulWidget {
-  const LikedVideosScreen({super.key});
+class HistoryScreen extends StatefulWidget {
+  const HistoryScreen({super.key});
 
   @override
-  State<LikedVideosScreen> createState() => _LikedVideosScreenState();
+  State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-class _LikedVideosScreenState extends State<LikedVideosScreen> {
+class _HistoryScreenState extends State<HistoryScreen> {
+  final _documents = [
+    {
+      'name': 'Android Programming Cookbook',
+      'link':
+          'https://enos.itcollege.ee/~jpoial/allalaadimised/reading/Android-Programming-Cookbook.pdf'
+    },
+  ];
+
+  final _images = [
+    {
+      'name': 'Arches National Park',
+      'link':
+          'https://upload.wikimedia.org/wikipedia/commons/6/60/The_Organ_at_Arches_National_Park_Utah_Corrected.jpg'
+    },
+    {
+      'name': 'Canyonlands National Park',
+      'link':
+          'https://upload.wikimedia.org/wikipedia/commons/7/78/Canyonlands_National_Park%E2%80%A6Needles_area_%286294480744%29.jpg'
+    },
+    {
+      'name': 'Death Valley National Park',
+      'link':
+          'https://upload.wikimedia.org/wikipedia/commons/b/b2/Sand_Dunes_in_Death_Valley_National_Park.jpg'
+    },
+    {
+      'name': 'Gates of the Arctic National Park and Preserve',
+      'link':
+          'https://upload.wikimedia.org/wikipedia/commons/e/e4/GatesofArctic.jpg'
+    }
+  ];
+
   final _videos = [
     {
       'name': 'Big Buck Bunny',
@@ -35,11 +66,17 @@ class _LikedVideosScreenState extends State<LikedVideosScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    var key = "likedVideos";
+    var key = "history";
     allData = [
-      ..._videos.where((video) =>
+      ..._documents.where((content) =>
           sharedPreferences!.containsKey(key) &&
-          sharedPreferences!.getStringList(key)!.contains(video['link']!))
+          sharedPreferences!.getStringList(key)!.contains(content['link']!)),
+      ..._images.where((content) =>
+          sharedPreferences!.containsKey(key) &&
+          sharedPreferences!.getStringList(key)!.contains(content['link']!)),
+      ..._videos.where((content) =>
+          sharedPreferences!.containsKey(key) &&
+          sharedPreferences!.getStringList(key)!.contains(content['link']!)),
     ];
 
     myDownloaderList = List.generate(allData.length, (index) => MyDownloader());
@@ -52,7 +89,7 @@ class _LikedVideosScreenState extends State<LikedVideosScreen> {
       appBar: AppBar(
         backgroundColor: Colors.blue.shade100,
         title: Text(
-          StringConstants.likedVideos,
+          StringConstants.history,
           style: TextStyle(
             fontWeight: FontWeight.w600,
           ),
