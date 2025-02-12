@@ -15,50 +15,6 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
-  final _documents = [
-    {
-      'name': 'Android Programming Cookbook',
-      'link':
-          'https://enos.itcollege.ee/~jpoial/allalaadimised/reading/Android-Programming-Cookbook.pdf'
-    },
-  ];
-
-  final _images = [
-    {
-      'name': 'Arches National Park',
-      'link':
-          'https://upload.wikimedia.org/wikipedia/commons/6/60/The_Organ_at_Arches_National_Park_Utah_Corrected.jpg'
-    },
-    {
-      'name': 'Canyonlands National Park',
-      'link':
-          'https://upload.wikimedia.org/wikipedia/commons/7/78/Canyonlands_National_Park%E2%80%A6Needles_area_%286294480744%29.jpg'
-    },
-    {
-      'name': 'Death Valley National Park',
-      'link':
-          'https://upload.wikimedia.org/wikipedia/commons/b/b2/Sand_Dunes_in_Death_Valley_National_Park.jpg'
-    },
-    {
-      'name': 'Gates of the Arctic National Park and Preserve',
-      'link':
-          'https://upload.wikimedia.org/wikipedia/commons/e/e4/GatesofArctic.jpg'
-    }
-  ];
-
-  final _videos = [
-    {
-      'name': 'Big Buck Bunny',
-      'link':
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-    },
-    {
-      'name': 'Elephant Dream',
-      'link':
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
-    }
-  ];
-
   var allData = [];
 
   List<MyDownloader> myDownloaderList = [];
@@ -68,13 +24,13 @@ class _HistoryScreenState extends State<HistoryScreen> {
     // TODO: implement initState
     var key = "history";
     allData = [
-      ..._documents.where((content) =>
+      ...documents.where((content) =>
           sharedPreferences!.containsKey(key) &&
           sharedPreferences!.getStringList(key)!.contains(content['link']!)),
-      ..._images.where((content) =>
+      ...images.where((content) =>
           sharedPreferences!.containsKey(key) &&
           sharedPreferences!.getStringList(key)!.contains(content['link']!)),
-      ..._videos.where((content) =>
+      ...videos.where((content) =>
           sharedPreferences!.containsKey(key) &&
           sharedPreferences!.getStringList(key)!.contains(content['link']!)),
     ];
@@ -152,8 +108,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     trailing: IconButton(
                       onPressed: () {
                         if (myDownloaderList[index].status.value ==
-                            "downloading") {
-                          myDownloaderList[index].cancelDownload();
+                                "downloading" ||
+                            myDownloaderList[index].isDownloading(url)) {
+                          myDownloaderList[index].cancelDownload(url);
                         } else if (!myDownloaderList[index].isDownloaded(url)) {
                           myDownloaderList[index].download(url, name);
                         } else if (myDownloaderList[index].status.value ==
@@ -162,63 +119,73 @@ class _HistoryScreenState extends State<HistoryScreen> {
                           myDownloaderList[index].deleteDownload(url);
                         }
                       },
-                      icon:
-                          myDownloaderList[index].status.value == "downloading"
+                      icon: myDownloaderList[index].status.value ==
+                                  "downloading" ||
+                              myDownloaderList[index].isDownloading(url)
+                          ? FittedBox(
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.downloading,
+                                    color: Colors.green,
+                                  ),
+                                  if (myDownloaderList[index].progress > 0)
+                                    Text(
+                                      "${myDownloaderList[index].progress.floor()}%",
+                                      style: const TextStyle(
+                                        fontSize: 10.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                  else
+                                    Text(
+                                      StringConstants.downloading,
+                                      style: const TextStyle(
+                                        fontSize: 5.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                ],
+                              ),
+                            )
+                          : myDownloaderList[index].status.value ==
+                                      "downloaded" ||
+                                  myDownloaderList[index].isDownloaded(url)
                               ? FittedBox(
                                   child: Column(
                                     children: [
-                                      const Icon(
-                                        Icons.downloading,
-                                        color: Colors.green,
+                                      Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
                                       ),
                                       Text(
-                                        "${myDownloaderList[index].progress.floor()}%",
-                                        style: const TextStyle(
-                                          fontSize: 10.0,
+                                        StringConstants.deleteDownload,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 6.0,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                     ],
                                   ),
                                 )
-                              : myDownloaderList[index].status.value ==
-                                          "downloaded" ||
-                                      myDownloaderList[index].isDownloaded(url)
-                                  ? FittedBox(
-                                      child: Column(
-                                        children: [
-                                          Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                          ),
-                                          Text(
-                                            StringConstants.deleteDownload,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 6.0,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
+                              : FittedBox(
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.download,
+                                        color: Colors.lightBlue,
                                       ),
-                                    )
-                                  : FittedBox(
-                                      child: Column(
-                                        children: [
-                                          Icon(
-                                            Icons.download,
-                                            color: Colors.lightBlue,
-                                          ),
-                                          Text(
-                                            StringConstants.download,
-                                            style: TextStyle(
-                                              fontSize: 6.0,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
+                                      Text(
+                                        StringConstants.download,
+                                        style: TextStyle(
+                                          fontSize: 6.0,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
+                                    ],
+                                  ),
+                                ),
                     ),
                   ),
                 );

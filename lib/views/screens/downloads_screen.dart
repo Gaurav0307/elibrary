@@ -65,9 +65,9 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
               itemBuilder: (_, index) {
                 String name = allDownloads[index].task.displayName;
                 String url = allDownloads[index].task.url;
-                bool isCompleted = myDownloader.isDownloaded(url);
+                // bool isCompleted = myDownloader.isDownloaded(url);
                 return Visibility(
-                  visible: isCompleted,
+                  // visible: isCompleted,
                   replacement: SizedBox.shrink(),
                   child: Card(
                     elevation: 5.0,
@@ -111,8 +111,9 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                       ),
                       trailing: IconButton(
                         onPressed: () {
-                          if (myDownloader.status.value == "downloading") {
-                            myDownloader.cancelDownload();
+                          if (myDownloader.status.value == "downloading" ||
+                              myDownloader.isDownloading(url)) {
+                            myDownloader.cancelDownload(url);
                           } else if (!myDownloader.isDownloaded(url)) {
                             myDownloader.download(url, name);
                           } else if (myDownloader.status.value == "completed" ||
@@ -120,7 +121,8 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                             myDownloader.deleteDownload(url);
                           }
                         },
-                        icon: myDownloader.status.value == "downloading"
+                        icon: myDownloader.status.value == "downloading" ||
+                                myDownloader.isDownloading(url)
                             ? FittedBox(
                                 child: Column(
                                   children: [
@@ -128,13 +130,22 @@ class _DownloadsScreenState extends State<DownloadsScreen> {
                                       Icons.downloading,
                                       color: Colors.green,
                                     ),
-                                    Text(
-                                      "${myDownloader.progress.floor()}%",
-                                      style: const TextStyle(
-                                        fontSize: 10.0,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
+                                    if (myDownloader.progress > 0)
+                                      Text(
+                                        "${myDownloader.progress.floor()}%",
+                                        style: const TextStyle(
+                                          fontSize: 10.0,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )
+                                    else
+                                      Text(
+                                        StringConstants.downloading,
+                                        style: const TextStyle(
+                                          fontSize: 5.0,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      )
                                   ],
                                 ),
                               )

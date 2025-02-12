@@ -36,6 +36,7 @@ class StringConstants {
   static const String thereIsNoDataToBeShown =
       "There is no data available to be shown here.";
   static const String download = "Download";
+  static const String downloading = "Downloading";
   static const String deleteDownload = "Delete\nDownload";
 
   /// Validation

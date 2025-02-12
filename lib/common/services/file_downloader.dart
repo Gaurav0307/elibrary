@@ -135,71 +135,71 @@ class MyDownloader {
 
   /// Process the user tapping on a notification by printing a message
   void _myNotificationTapCallback(
-    Task task,
-    NotificationType notificationType,
-  ) {
+      Task task, NotificationType notificationType) {
     debugPrint(
         'Tapped notification $notificationType for taskId ${task.taskId}');
   }
 
   Future<void> download(String url, String displayName) async {
-    var fileName =
-        "${DateTime.timestamp().microsecondsSinceEpoch}.${url.split(".").last}";
+    if (!isDownloading(url)) {
+      var fileName =
+          "${DateTime.timestamp().microsecondsSinceEpoch}.${url.split(".").last}";
 
-    /// define the download task (subset of parameters shown)
-    _downloadTask = DownloadTask(
-      url: url,
-      filename: fileName,
-      displayName: displayName,
-      directory: 'my_downloads',
-      updates: Updates.statusAndProgress,
-      // request status and progress updates
-      requiresWiFi: false,
-      retries: 5,
-      allowPause: true,
-      metaData: '$displayName - $fileName',
-    );
+      /// define the download task (subset of parameters shown)
+      _downloadTask = DownloadTask(
+        url: url,
+        filename: fileName,
+        displayName: displayName,
+        directory: 'my_downloads',
+        updates: Updates.statusAndProgress,
+        // request status and progress updates
+        requiresWiFi: false,
+        retries: 5,
+        allowPause: true,
+        metaData: '$displayName - $fileName',
+      );
 
-    /// Start download, and wait for result. Show progress and status changes while downloading
-    final result = await FileDownloader().download(
-      _downloadTask!,
-      onProgress: (progress_) {
-        progress.value = (progress_ * 100).floorToDouble();
-        debugPrint('Progress: $progress%');
-      },
-      onStatus: (status_) {
-        if (status_ == TaskStatus.running) {
-          status.value = "downloading";
-        } else if (status_ == TaskStatus.paused) {
-          status.value = "paused";
-        } else if (status_ == TaskStatus.canceled) {
-          status.value = "canceled";
-        } else if (status_ == TaskStatus.complete) {
-          status.value = "completed";
-        }
+      /// Start download, and wait for result. Show progress and status changes while downloading
+      final result = await FileDownloader().download(
+        _downloadTask!,
+        onProgress: (progress_) {
+          progress.value = (progress_ * 100).floorToDouble();
+          debugPrint('Progress: $progress%');
+        },
+        onStatus: (status_) {
+          if (status_ == TaskStatus.running) {
+            status.value = "downloading";
+          } else if (status_ == TaskStatus.paused) {
+            status.value = "paused";
+          } else if (status_ == TaskStatus.canceled) {
+            status.value = "canceled";
+          } else if (status_ == TaskStatus.complete) {
+            status.value = "completed";
+          }
 
-        debugPrint('Status: $status_');
-      },
-      onElapsedTime: (duration) => debugPrint(""),
-      elapsedTimeInterval: const Duration(seconds: 20),
-    );
+          debugPrint('Status: $status_');
+        },
+        onElapsedTime: (duration) => debugPrint(""),
+        elapsedTimeInterval: const Duration(seconds: 20),
+      );
 
-    /// Act on the result
-    switch (result.status) {
-      case TaskStatus.complete:
-        debugPrint('Success!');
+      /// Act on the result
+      switch (result.status) {
+        case TaskStatus.complete:
+          debugPrint('Success!');
 
-      case TaskStatus.canceled:
-        debugPrint('Download was canceled');
+        case TaskStatus.canceled:
+          debugPrint('Download was canceled');
 
-      case TaskStatus.paused:
-        debugPrint('Download was paused');
+        case TaskStatus.paused:
+          debugPrint('Download was paused');
 
-      default:
-        debugPrint('Download not successful');
+        default:
+          debugPrint('Download not successful');
+      }
+
+      loadDownloads();
     }
-
-    loadDownloads();
   }
 
   Future<void> pauseDownload() async {
@@ -210,9 +210,27 @@ class MyDownloader {
     await FileDownloader().resume(_downloadTask!);
   }
 
-  Future<void> cancelDownload() async {
-    await FileDownloader().cancelTaskWithId(_downloadTask!.taskId);
-    deleteDownload(_downloadTask!.url);
+  // Future<void> cancelDownload() async {
+  //   await FileDownloader().cancelTaskWithId(_downloadTask!.taskId);
+  //   deleteDownload(_downloadTask!.url);
+  // }
+
+  Future<void> cancelDownload(String url) async {
+    String taskId = await getTaskId(url);
+    await FileDownloader().cancelTaskWithId(taskId);
+    deleteDownload(url);
+  }
+
+  Future<String> getTaskId(String url) async {
+    allDownloads.value = await FileDownloader().database.allRecords();
+    String taskId = "";
+    for (TaskRecord download in allDownloads) {
+      if (download.task.url == url) {
+        taskId = download.task.taskId;
+      }
+    }
+
+    return taskId;
   }
 
   Future<void> deleteDownload(String url) async {
@@ -223,13 +241,12 @@ class MyDownloader {
       if (download.task.url == url) {
         taskId = download.task.taskId;
         file = "${download.task.directory}/${download.task.filename}";
+        if (taskId.isNotEmpty) {
+          debugPrint("File (deleteDownload): $file");
+          await FileDownloader().database.deleteRecordWithId(taskId);
+          await _deleteFile(file);
+        }
       }
-    }
-
-    if (taskId.isNotEmpty) {
-      debugPrint("File: $file");
-      await FileDownloader().database.deleteRecordWithId(taskId);
-      await _deleteFile(file);
     }
 
     loadDownloads();
@@ -252,13 +269,27 @@ class MyDownloader {
     }
   }
 
+  bool isDownloading(String url) {
+    bool isDownloading = false;
+    for (TaskRecord download in allDownloads) {
+      if (download.task.url == url && download.status == TaskStatus.running) {
+        isDownloading = true;
+        debugPrint(
+          "File Path (isDownloading): ${download.task.directory}/${download.task.filename}",
+        );
+      }
+    }
+
+    return isDownloading;
+  }
+
   bool isDownloaded(String url) {
     bool isDownloaded = false;
     for (TaskRecord download in allDownloads) {
       if (download.task.url == url && download.status == TaskStatus.complete) {
         isDownloaded = true;
         debugPrint(
-          "File Path: ${download.task.directory}/${download.task.filename}",
+          "File Path (isDownloaded): ${download.task.directory}/${download.task.filename}",
         );
       }
     }
@@ -274,7 +305,7 @@ class MyDownloader {
         final directory = await getApplicationDocumentsDirectory();
         downloadedFilePath = '${directory.path}/$file';
 
-        debugPrint("File Path: $downloadedFilePath");
+        debugPrint("File Path (getDownloadedFilePath): $downloadedFilePath");
       }
     }
 
@@ -283,6 +314,7 @@ class MyDownloader {
 
   Future<void> loadDownloads() async {
     allDownloads.value = await FileDownloader().database.allRecords();
+    debugPrint("All Downloads: ${allDownloads.string}");
   }
 
   /// Attempt to get permissions if not already granted

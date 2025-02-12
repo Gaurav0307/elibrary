@@ -15,19 +15,6 @@ class LikedVideosScreen extends StatefulWidget {
 }
 
 class _LikedVideosScreenState extends State<LikedVideosScreen> {
-  final _videos = [
-    {
-      'name': 'Big Buck Bunny',
-      'link':
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-    },
-    {
-      'name': 'Elephant Dream',
-      'link':
-          'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'
-    }
-  ];
-
   var allData = [];
 
   List<MyDownloader> myDownloaderList = [];
@@ -37,7 +24,7 @@ class _LikedVideosScreenState extends State<LikedVideosScreen> {
     // TODO: implement initState
     var key = "likedVideos";
     allData = [
-      ..._videos.where((video) =>
+      ...videos.where((video) =>
           sharedPreferences!.containsKey(key) &&
           sharedPreferences!.getStringList(key)!.contains(video['link']!))
     ];
@@ -115,8 +102,9 @@ class _LikedVideosScreenState extends State<LikedVideosScreen> {
                     trailing: IconButton(
                       onPressed: () {
                         if (myDownloaderList[index].status.value ==
-                            "downloading") {
-                          myDownloaderList[index].cancelDownload();
+                                "downloading" ||
+                            myDownloaderList[index].isDownloading(url)) {
+                          myDownloaderList[index].cancelDownload(url);
                         } else if (!myDownloaderList[index].isDownloaded(url)) {
                           myDownloaderList[index].download(url, name);
                         } else if (myDownloaderList[index].status.value ==
@@ -125,63 +113,73 @@ class _LikedVideosScreenState extends State<LikedVideosScreen> {
                           myDownloaderList[index].deleteDownload(url);
                         }
                       },
-                      icon:
-                          myDownloaderList[index].status.value == "downloading"
+                      icon: myDownloaderList[index].status.value ==
+                                  "downloading" ||
+                              myDownloaderList[index].isDownloading(url)
+                          ? FittedBox(
+                              child: Column(
+                                children: [
+                                  const Icon(
+                                    Icons.downloading,
+                                    color: Colors.green,
+                                  ),
+                                  if (myDownloaderList[index].progress > 0)
+                                    Text(
+                                      "${myDownloaderList[index].progress.floor()}%",
+                                      style: const TextStyle(
+                                        fontSize: 10.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                  else
+                                    Text(
+                                      StringConstants.downloading,
+                                      style: const TextStyle(
+                                        fontSize: 5.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    )
+                                ],
+                              ),
+                            )
+                          : myDownloaderList[index].status.value ==
+                                      "downloaded" ||
+                                  myDownloaderList[index].isDownloaded(url)
                               ? FittedBox(
                                   child: Column(
                                     children: [
-                                      const Icon(
-                                        Icons.downloading,
-                                        color: Colors.green,
+                                      Icon(
+                                        Icons.delete,
+                                        color: Colors.red,
                                       ),
                                       Text(
-                                        "${myDownloaderList[index].progress.floor()}%",
-                                        style: const TextStyle(
-                                          fontSize: 10.0,
+                                        StringConstants.deleteDownload,
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 6.0,
                                           fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                     ],
                                   ),
                                 )
-                              : myDownloaderList[index].status.value ==
-                                          "downloaded" ||
-                                      myDownloaderList[index].isDownloaded(url)
-                                  ? FittedBox(
-                                      child: Column(
-                                        children: [
-                                          Icon(
-                                            Icons.delete,
-                                            color: Colors.red,
-                                          ),
-                                          Text(
-                                            StringConstants.deleteDownload,
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                              fontSize: 6.0,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
+                              : FittedBox(
+                                  child: Column(
+                                    children: [
+                                      Icon(
+                                        Icons.download,
+                                        color: Colors.lightBlue,
                                       ),
-                                    )
-                                  : FittedBox(
-                                      child: Column(
-                                        children: [
-                                          Icon(
-                                            Icons.download,
-                                            color: Colors.lightBlue,
-                                          ),
-                                          Text(
-                                            StringConstants.download,
-                                            style: TextStyle(
-                                              fontSize: 6.0,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                        ],
+                                      Text(
+                                        StringConstants.download,
+                                        style: TextStyle(
+                                          fontSize: 6.0,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
+                                    ],
+                                  ),
+                                ),
                     ),
                   ),
                 );
