@@ -38,6 +38,8 @@ class StringConstants {
   static const String download = "Download";
   static const String downloading = "Downloading";
   static const String deleteDownload = "Delete\nDownload";
+  static const String doYouWantToDeleteCompleteHistory =
+      "Do you want to delete complete history?";
 
   /// Validation
   static const String fullNameIsRequired = "Full Name is required.";

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -22,6 +23,7 @@ class FileViewer extends StatefulWidget {
 
 class _FileViewerState extends State<FileViewer> {
   VideoPlayerController? videoPlayerController;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -44,7 +46,10 @@ class _FileViewerState extends State<FileViewer> {
       videoPlayerController!.initialize();
     }
 
-    addToHistory(widget.filePath);
+    _timer = Timer(
+      const Duration(seconds: 5),
+      () => addToHistory(widget.filePath),
+    );
   }
 
   Future<void> addToHistory(String filePath) async {
@@ -131,6 +136,9 @@ class _FileViewerState extends State<FileViewer> {
     super.dispose();
     if (videoPlayerController != null) {
       videoPlayerController!.dispose();
+    }
+    if (_timer != null) {
+      _timer!.cancel();
     }
   }
 

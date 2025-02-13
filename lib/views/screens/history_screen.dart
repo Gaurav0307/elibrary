@@ -15,6 +15,8 @@ class HistoryScreen extends StatefulWidget {
 }
 
 class _HistoryScreenState extends State<HistoryScreen> {
+  final key = "history";
+
   var allData = [];
 
   List<MyDownloader> myDownloaderList = [];
@@ -22,7 +24,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
   @override
   void initState() {
     // TODO: implement initState
-    var key = "history";
+    loadData();
+    super.initState();
+  }
+
+  void loadData() {
     allData = [
       ...documents.where((content) =>
           sharedPreferences!.containsKey(key) &&
@@ -36,7 +42,47 @@ class _HistoryScreenState extends State<HistoryScreen> {
     ];
 
     myDownloaderList = List.generate(allData.length, (index) => MyDownloader());
-    super.initState();
+  }
+
+  Future<void> deleteAll() async {
+    await showAdaptiveDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            StringConstants.confirm,
+            style: TextStyle(
+              color: Colors.red,
+            ),
+          ),
+          content: const Text(StringConstants.doYouWantToDeleteCompleteHistory),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                StringConstants.no,
+                style: TextStyle(color: Colors.blue),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                StringConstants.yes,
+                style: TextStyle(color: Colors.red),
+              ),
+              onPressed: () async {
+                await sharedPreferences!.remove(key);
+                setState(() {
+                  loadData();
+                });
+                Navigator.of(context).pop();
+              },
+            )
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -50,6 +96,16 @@ class _HistoryScreenState extends State<HistoryScreen> {
             fontWeight: FontWeight.w600,
           ),
         ),
+        actions: [
+          if (allData.isNotEmpty)
+            IconButton(
+              onPressed: () {
+                deleteAll();
+              },
+              icon: Icon(Icons.delete_forever),
+            ),
+          SizedBox(width: 20.0),
+        ],
       ),
       body: Visibility(
         visible: allData.isNotEmpty,
