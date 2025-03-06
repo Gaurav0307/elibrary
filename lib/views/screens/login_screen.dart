@@ -1,4 +1,4 @@
-import 'package:elibrary/views/screens/home_screen.dart';
+import 'package:elibrary/common/global/global.dart';
 import 'package:elibrary/views/screens/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -9,6 +9,7 @@ import '../../common/constants/string_constants.dart';
 import '../../common/utils/utility_methods.dart';
 import '../widgets/border_button.dart';
 import '../widgets/gradient_button.dart';
+import 'home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -291,29 +292,33 @@ class _LoginFormState extends State<LoginForm> {
             ],
           ),
           const SizedBox(height: 50.0),
-          Visibility(
-            visible: true,
-            replacement: Center(
-              child: CircularProgressIndicator(
-                color: ColorConstants.theWhite,
-                strokeWidth: 3.0,
-              ),
-            ),
-            child: GradientButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  FocusScope.of(context).unfocus();
-                }
-                Get.to(() => const HomeScreen());
-              },
-              child: Text(
-                StringConstants.login,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: ColorConstants.theWhite,
+          Obx(
+            () => Visibility(
+              visible: !authController.isLoading.value,
+              replacement: Center(
+                child: CircularProgressIndicator(
+                  color: ColorConstants.theIndigo,
+                  strokeWidth: 3.0,
                 ),
-                textAlign: TextAlign.center,
+              ),
+              child: GradientButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    FocusScope.of(context).unfocus();
+                    if (await authController.login(email, password)) {
+                      Get.to(() => const HomeScreen());
+                    }
+                  }
+                },
+                child: Text(
+                  StringConstants.login,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: ColorConstants.theWhite,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
           ),

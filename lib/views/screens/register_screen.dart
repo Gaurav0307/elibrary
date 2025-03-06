@@ -1,3 +1,4 @@
+import 'package:elibrary/common/global/global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -275,24 +276,24 @@ class _RegisterFormState extends State<RegisterForm> {
             style: TextStyle(color: ColorConstants.theBlack),
             validator: _validateCollegeName,
             inputFormatters: [
-              FilteringTextInputFormatter.allow(
-                  RegExp(r'[a-zA-Z ]') // Allow alphabets and space
+              FilteringTextInputFormatter.allow(RegExp(
+                      r'[a-zA-Z .,]') // Allow alphabets, space, dot and comma
                   ),
-              TextInputFormatter.withFunction(
-                (oldValue, newValue) {
-                  // Convert the new input to title case
-                  if (newValue.text.isNotEmpty) {
-                    final convertedValue = toTitleCase(newValue.text);
-                    return TextEditingValue(
-                      text: convertedValue,
-                      selection: TextSelection.fromPosition(
-                        TextPosition(offset: convertedValue.length),
-                      ),
-                    );
-                  }
-                  return newValue;
-                },
-              ),
+              // TextInputFormatter.withFunction(
+              //   (oldValue, newValue) {
+              //     // Convert the new input to title case
+              //     if (newValue.text.isNotEmpty) {
+              //       final convertedValue = toTitleCase(newValue.text);
+              //       return TextEditingValue(
+              //         text: convertedValue,
+              //         selection: TextSelection.fromPosition(
+              //           TextPosition(offset: convertedValue.length),
+              //         ),
+              //       );
+              //     }
+              //     return newValue;
+              //   },
+              // ),
             ],
             maxLines: 2,
             minLines: 1,
@@ -432,28 +433,53 @@ class _RegisterFormState extends State<RegisterForm> {
             },
           ),
           const SizedBox(height: 40.0),
-          Visibility(
-            visible: true,
-            replacement: Center(
-              child: CircularProgressIndicator(
-                color: ColorConstants.theWhite,
-                strokeWidth: 3.0,
-              ),
-            ),
-            child: GradientButton(
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  _formKey.currentState!.save();
-                  FocusScope.of(context).unfocus();
-                }
-              },
-              child: Text(
-                StringConstants.register,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: ColorConstants.theWhite,
+          Obx(
+            () => Visibility(
+              visible: !authController.isLoading.value,
+              replacement: Center(
+                child: CircularProgressIndicator(
+                  color: ColorConstants.theIndigo,
+                  strokeWidth: 3.0,
                 ),
-                textAlign: TextAlign.center,
+              ),
+              child: GradientButton(
+                onPressed: () async {
+                  if (_formKey.currentState!.validate()) {
+                    _formKey.currentState!.save();
+                    FocusScope.of(context).unfocus();
+
+                    ///Split firstName and lastName from fullName
+                    String firstName = '';
+                    String lastName = '';
+                    List<String> nameParts = fullName
+                        .trim()
+                        .split(RegExp(r'\s+')); // Split by spaces
+
+                    if (nameParts.length == 1) {
+                      // If there's only one word, set it as firstName
+                      firstName = nameParts[0];
+                      lastName = '.';
+                    } else {
+                      lastName = nameParts
+                          .removeLast(); // Extract the last word as lastName
+                      firstName = nameParts
+                          .join(" "); // Join the remaining words as firstName
+                    }
+
+                    if (await authController.register(firstName, lastName,
+                        email, password, mobile, collegeName)) {
+                      Navigator.pop(context);
+                    }
+                  }
+                },
+                child: Text(
+                  StringConstants.register,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: ColorConstants.theWhite,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
               ),
             ),
           ),

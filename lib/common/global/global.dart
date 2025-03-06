@@ -1,8 +1,11 @@
+import 'package:elibrary/controllers/auth_controller.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 SharedPreferences? sharedPreferences;
 late String token;
 late String userId;
+AuthController authController = Get.put(AuthController());
 
 final documents = [
   {
@@ -48,6 +51,5 @@ final videos = [
   }
 ];
 
-const String apiBaseUrl = "https://rest-apis-chat-app.onrender.com";
-// const String apiBaseUrl =
-//     "https://4351-2401-4900-8837-2bd3-2df5-57d8-4351-7750.ngrok-free.app";
+const String apiBaseUrl =
+    "https://c4c3-2401-4900-8834-1627-24af-fc9c-86e0-bd95.ngrok-free.app";
