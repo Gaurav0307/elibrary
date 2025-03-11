@@ -110,7 +110,7 @@ class AuthController extends GetxController with BaseController {
 
     final Map<String, dynamic> body = {
       "query": r"""
-      mutation Login($email: String!, $password: String!) {
+      mutation ($email: String!, $password: String!) {
         login(email: $email, password: $password) {
           token
           email
@@ -121,11 +121,11 @@ class AuthController extends GetxController with BaseController {
       }
       """,
       "variables": {"email": email, "password": password},
-      "operationName": "Login"
     };
 
-    var responseJson =
-        await BaseClient().post(baseUrl, endpoint, headers, body).catchError(
+    var responseJson = await BaseClient()
+        .post(baseUrl, endpoint, headers, jsonEncode(body))
+        .catchError(
       (error) {
         if (error is BadRequestException) {
           var apiError = json.decode(error.message!);
@@ -165,12 +165,17 @@ class AuthController extends GetxController with BaseController {
         showMessage(description: message);
       }
 
-      token = jsonDecode(responseJson)["token"].toString();
-      userId = jsonDecode(responseJson)["userId"].toString();
+      token = jsonDecode(responseJson)["data"]["login"]["token"].toString();
+      userId = jsonDecode(responseJson)["data"]["login"]["userID"].toString();
+      username =
+          jsonDecode(responseJson)["data"]["login"]["username"].toString();
+      userEmail = jsonDecode(responseJson)["data"]["login"]["email"].toString();
 
       if (token != 'null') {
         sharedPreferences?.setString(StorageConstants.token, token);
         sharedPreferences?.setString(StorageConstants.userId, userId);
+        sharedPreferences?.setString(StorageConstants.username, username);
+        sharedPreferences?.setString(StorageConstants.userEmail, userEmail);
 
         await UtilityMethods.loadInitialData();
 

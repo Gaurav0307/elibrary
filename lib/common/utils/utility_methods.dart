@@ -21,6 +21,8 @@ class UtilityMethods {
 
     token = sharedPreferences!.getString(StorageConstants.token) ?? "";
     userId = sharedPreferences!.getString(StorageConstants.userId) ?? "";
+    username = sharedPreferences!.getString(StorageConstants.username) ?? "";
+    userEmail = sharedPreferences!.getString(StorageConstants.userEmail) ?? "";
 
     if (token.isNotEmpty && userId.isNotEmpty) {
       await Future.wait([

@@ -5,6 +5,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 SharedPreferences? sharedPreferences;
 late String token;
 late String userId;
+late String username;
+late String userEmail;
+
 AuthController authController = Get.put(AuthController());
 
 final documents = [
@@ -52,4 +55,4 @@ final videos = [
 ];
 
 const String apiBaseUrl =
-    "https://c4c3-2401-4900-8834-1627-24af-fc9c-86e0-bd95.ngrok-free.app";
+    "https://d35d-2401-4900-8835-ed9f-a5d7-ed47-acad-996b.ngrok-free.app";

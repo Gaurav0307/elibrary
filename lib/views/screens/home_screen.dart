@@ -4,9 +4,13 @@ import 'package:elibrary/views/screens/branches_screen.dart';
 import 'package:elibrary/views/screens/downloads_screen.dart';
 import 'package:elibrary/views/screens/history_screen.dart';
 import 'package:elibrary/views/screens/liked_videos_screen.dart';
+import 'package:elibrary/views/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+
+import '../../common/constants/storage_constants.dart';
+import '../../common/global/global.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -139,7 +143,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.w600,
                         color: Colors.red),
                   ),
-                  onTap: () {},
+                  onTap: () async {
+                    if (sharedPreferences!
+                            .containsKey(StorageConstants.token) ||
+                        true) {
+                      await sharedPreferences!.clear();
+
+                      token = "";
+                      userId = "";
+                      username = "";
+                      userEmail = "";
+
+                      Get.offAll(() => const LoginScreen());
+                    }
+                  },
                 ),
               ],
             ),

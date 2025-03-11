@@ -10,6 +10,7 @@ import '../../common/constants/color_constants.dart';
 import '../../common/constants/string_constants.dart';
 import '../../common/global/global.dart';
 import '../../common/utils/utility_methods.dart';
+import 'home_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -47,7 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await UtilityMethods.loadInitialData();
 
     if (token.isNotEmpty) {
-      // Get.to(() => const HomeScreen());
+      Get.to(() => const HomeScreen());
     } else {
       Get.to(() => const LoginScreen());
     }
